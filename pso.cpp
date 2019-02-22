@@ -100,11 +100,72 @@ void imprimeMelhorParticula(struct melhor melhorParticuasDeTodas){
 	}
 	printf("] e o custo e %.2f",melhorParticuasDeTodas.custo);
 }
-	
+void multiplica(float w,float *vetorDeTrabalho){
+	for(int i=0;i<TAMPARTICULA;i++)
+		vetorDeTrabalho[i] = w * vetorDeTrabalho[i];
+}
+
+void subtracaoVetor(float *vetorResposta,float *vetor1,float *vetor2){
+	for(int i = 0;i<TAMPARTICULA;i++)
+		vetorResposta[i]=vetor1[i]-vetor2[i];
+}
+
+void somar3Vetores(float *vetorAtual,float *vetorA,float *vetorB){
+		for(int i = 0;i<TAMPARTICULA;i++)
+			vetorAtual[i] += vetorA[i]+vetorB[i];
+}
+
+void somarPosicaoVelocidade(float *vetorPosicao,float *vetorVelocidade){
+	for(int i = 0;i<TAMPARTICULA;i++)
+			vetorPosicao[i] += vetorVelocidade[i];
+}
+
+void copiarPosicaoDeParticula(float *posicaoDestino,float *posicaoOrigem){
+	for(int i = 0;i<TAMPARTICULA;i++)
+		posicaoDestino[i]=posicaoOrigem[i];
+}
+
 int main(){
 	struct particula populacaoDeParticulas[TAMPOPULACAO];
 	struct melhor melhorParticuasDeTodas;
 	inicializaPopulacaoDeParticulas(populacaoDeParticulas);
+	melhorParticuasDeTodas = retornaMelhorParticula(populacaoDeParticulas);
+	imprimeMelhorParticula(melhorParticuasDeTodas);
+	imprimirPopulacaoDeParticulas(populacaoDeParticulas);
+	
+	
+	float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float w = 1.0;
+	float coefAmortecimento = 0.99;
+	float coefAceleracaoPessoal = 2.0;
+	float coefAceleracaoSocial = 2.0;
+	float respostaVetorCognitive[TAMPARTICULA];
+	float respostaVetorSocial[TAMPARTICULA];
+	for(int i =0;i<TAMPOPULACAO;i++){
+		populacaoDeParticulas[i];
+		multiplica(w,populacaoDeParticulas[i].velocidade);
+		subtracaoVetor(respostaVetorCognitive,
+		populacaoDeParticulas[i].melhorPosicao,
+		populacaoDeParticulas[i].posicao);
+		multiplica(r1*coefAceleracaoPessoal,respostaVetorCognitive);
+		subtracaoVetor(respostaVetorSocial,
+		melhorParticuasDeTodas.posicao,
+		populacaoDeParticulas[i].posicao);
+		multiplica(r2*coefAceleracaoSocial,respostaVetorSocial);
+		somar3Vetores(populacaoDeParticulas[i].velocidade,
+		respostaVetorCognitive,respostaVetorSocial);
+		somarPosicaoVelocidade(populacaoDeParticulas[i].posicao,
+		populacaoDeParticulas[i].velocidade);
+		populacaoDeParticulas[i].custo = calcularCusto(populacaoDeParticulas[i].posicao);
+		if(populacaoDeParticulas[i].custo < populacaoDeParticulas[i].melhorCusto){
+			populacaoDeParticulas[i].melhorCusto = populacaoDeParticulas[i].custo;
+			copiarPosicaoDeParticula(populacaoDeParticulas[i].melhorPosicao,
+			populacaoDeParticulas[i].posicao);
+		}
+				
+	}
+	
 	melhorParticuasDeTodas = retornaMelhorParticula(populacaoDeParticulas);
 	imprimeMelhorParticula(melhorParticuasDeTodas);
 	imprimirPopulacaoDeParticulas(populacaoDeParticulas);
