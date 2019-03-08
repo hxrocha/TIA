@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define TAMPOPULACAO 6
+#include <time.h>
+#define TAMPOPULACAO 50
 #define TAMPARTICULA 5
 
 struct particula{
@@ -125,49 +126,67 @@ void copiarPosicaoDeParticula(float *posicaoDestino,float *posicaoOrigem){
 		posicaoDestino[i]=posicaoOrigem[i];
 }
 
-int main(){
-	struct particula populacaoDeParticulas[TAMPOPULACAO];
-	struct melhor melhorParticuasDeTodas;
-	inicializaPopulacaoDeParticulas(populacaoDeParticulas);
-	melhorParticuasDeTodas = retornaMelhorParticula(populacaoDeParticulas);
-	imprimeMelhorParticula(melhorParticuasDeTodas);
-	imprimirPopulacaoDeParticulas(populacaoDeParticulas);
-	
-	
+void iteracao(struct particula *populacaoDeParticulas,
+    struct melhor *melhorParticuasDeTodas,
+    float *w,float *respostaVetorCognitive,float *respostaVetorSocial	
+
+){
 	float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 	float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	float w = 1.0;
+	
 	float coefAmortecimento = 0.99;
 	float coefAceleracaoPessoal = 2.0;
 	float coefAceleracaoSocial = 2.0;
-	float respostaVetorCognitive[TAMPARTICULA];
-	float respostaVetorSocial[TAMPARTICULA];
+	
 	for(int i =0;i<TAMPOPULACAO;i++){
 		populacaoDeParticulas[i];
-		multiplica(w,populacaoDeParticulas[i].velocidade);
-		subtracaoVetor(respostaVetorCognitive,
-		populacaoDeParticulas[i].melhorPosicao,
-		populacaoDeParticulas[i].posicao);
+		multiplica(*w,populacaoDeParticulas[i].velocidade);
+		
+		subtracaoVetor(respostaVetorCognitive,populacaoDeParticulas[i].melhorPosicao,populacaoDeParticulas[i].posicao);
 		multiplica(r1*coefAceleracaoPessoal,respostaVetorCognitive);
-		subtracaoVetor(respostaVetorSocial,
-		melhorParticuasDeTodas.posicao,
-		populacaoDeParticulas[i].posicao);
+		
+		subtracaoVetor(respostaVetorSocial,melhorParticuasDeTodas->posicao,	populacaoDeParticulas[i].posicao);
 		multiplica(r2*coefAceleracaoSocial,respostaVetorSocial);
-		somar3Vetores(populacaoDeParticulas[i].velocidade,
-		respostaVetorCognitive,respostaVetorSocial);
-		somarPosicaoVelocidade(populacaoDeParticulas[i].posicao,
-		populacaoDeParticulas[i].velocidade);
+		
+		somar3Vetores(populacaoDeParticulas[i].velocidade,respostaVetorCognitive,respostaVetorSocial);
+		
+		somarPosicaoVelocidade(populacaoDeParticulas[i].posicao,populacaoDeParticulas[i].velocidade);
 		populacaoDeParticulas[i].custo = calcularCusto(populacaoDeParticulas[i].posicao);
+		
 		if(populacaoDeParticulas[i].custo < populacaoDeParticulas[i].melhorCusto){
 			populacaoDeParticulas[i].melhorCusto = populacaoDeParticulas[i].custo;
 			copiarPosicaoDeParticula(populacaoDeParticulas[i].melhorPosicao,
 			populacaoDeParticulas[i].posicao);
 		}
-				
+		
+		if(populacaoDeParticulas[i].custo < melhorParticuasDeTodas->custo){
+			melhorParticuasDeTodas->custo = populacaoDeParticulas[i].custo;
+			for(int j =0;j<TAMPARTICULA;j++)
+				melhorParticuasDeTodas->posicao[j] = populacaoDeParticulas[i].posicao[j];
+		}
+						
 	}
+	(*w) = (*w)*coefAmortecimento;
+	printf("\n o valor de w e %.2f",*w);
+	
+	
+}
+
+
+int main(){
+	struct particula populacaoDeParticulas[TAMPOPULACAO];
+	struct melhor melhorParticuasDeTodas;
+	inicializaPopulacaoDeParticulas(populacaoDeParticulas);
+	srand(time(NULL));
+	melhorParticuasDeTodas = retornaMelhorParticula(populacaoDeParticulas);
+	float w = 1;
+	float respostaVetorCognitive[TAMPARTICULA]= {0.0,0.0,0.0,0.0,0.0};
+	float respostaVetorSocial[TAMPARTICULA] = {0.0,0.0,0.0,0.0,0.0};
+	for(int it=0;it<100;it++)	
+		iteracao(populacaoDeParticulas,&melhorParticuasDeTodas,&w,respostaVetorCognitive,respostaVetorSocial);
 	
 	melhorParticuasDeTodas = retornaMelhorParticula(populacaoDeParticulas);
 	imprimeMelhorParticula(melhorParticuasDeTodas);
-	imprimirPopulacaoDeParticulas(populacaoDeParticulas);
+//	imprimirPopulacaoDeParticulas(populacaoDeParticulas);
 
 }
