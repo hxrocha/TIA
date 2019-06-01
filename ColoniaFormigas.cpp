@@ -85,7 +85,27 @@ float calculaDistancia(vector<int>S,float matrizCaminho[TAM][TAM]){
 	return(resposta);
 }
 
-
+void atualizaFeromonio(float feromonio[TAM][TAM],int K,
+	float *vetDistancias,vector<int> *vetCaminhos){
+	float matVarFeromonio[TAM][TAM];
+	int i,j;
+	for(i=0;i<TAM;i++){
+		for(j=0;j<TAM;j++)
+			matVarFeromonio[i][j]=0;
+	}
+	for(i=0;i<K;i++){
+		for(j=0;j<vetCaminhos[i].size()-1;j++)
+    		matVarFeromonio[vetCaminhos[i].at(j)][vetCaminhos[i].at(j+1)] 
+			  +=1/vetDistancias[i];
+	}
+	
+	for(i=0;i<TAM;i++)
+		for(j=0;j<TAM;j++)
+			feromonio[i][j] = 0.9*feromonio[i][j] + matVarFeromonio[i][j];
+		
+	
+	
+}
 
 
 
@@ -98,7 +118,7 @@ int main(){
 	srand(time(NULL));
 	vector <int> Sk,S;
 	float L = FLT_MAX;
-	int K = 5;
+	int K = 20;
 	float vetDistancias[K];
 	vector<int> vetCaminhos[K];
 	float caminhos[TAM][TAM]={
@@ -110,96 +130,44 @@ int main(){
 		{5.2,-1,3.2,-1,4.7,-1,-1},
 		{-1,5.2,3,4.8,-1,-1,-1}};
 	
-
-	
+ 	geraMatrizN(caminhos,n);
 	geraMatrizFeromonio(feromonio);
-    geraMatrizN(caminhos,n);
-    geraMatrizP(caminhos,feromonio,n,p);
-    int r ;
-    
-    
-    for(i=0;i<K;i++){
-    	do{
-    	Sk.clear();
-    	Sk.push_back(0);
-    	int laco =0;
-    	do{
-	    	r = sorteio(p[Sk.back()]);
-	    	if(eInedita(r,Sk)){
-	    		Sk.push_back(r);
-	    		laco = 0;
-			}
-	    	else
-	    		laco++;
-		}while((r !=3) && (laco <= 10));	
-	}while(r!=3);
+    int g;
+    for(g = 0;g<100;g++){
+    	geraMatrizP(caminhos,feromonio,n,p);
+	    int r ;
+	    for(i=0;i<K;i++){
+	    	do{
+	    	Sk.clear();
+	    	Sk.push_back(0);
+	    	int laco =0;
+	    	do{
+		    	r = sorteio(p[Sk.back()]);
+		    	if(eInedita(r,Sk)){
+		    		Sk.push_back(r);
+		    		laco = 0;
+				}
+		    	else
+		    		laco++;
+			}while((r !=3) && (laco <= 10));	
+		}while(r!=3);
+	
+	    float Lk = calculaDistancia(Sk,caminhos);
+	   
+	    if(Lk < L ){
+	    	L =Lk;
+	    	S = Sk;
+		}
+		vetDistancias[i] = Lk;
+		vetCaminhos[i]=Sk;
+		}
+		atualizaFeromonio(feromonio,K,vetDistancias,vetCaminhos);
+	}
 
-    float Lk = calculaDistancia(Sk,caminhos);
-   
-    if(Lk < L ){
-    	L =Lk;
-    	S = Sk;
-	}
-	vetDistancias[i] = Lk;
-	vetCaminhos[i]=Sk;
-	}
-	
-	float matVarFeromonio[TAM][TAM];
-	for(i=0;i<TAM;i++){
-		for(j=0;j<TAM;j++)
-			matVarFeromonio[i][j]=0;
-	}
-	for(int i=0;i<K;i++){
-		for(j=0;j<vetCaminhos[i].size()-1;j++)
-    		matVarFeromonio[vetCaminhos[i].at(j)][vetCaminhos[i].at(j+1)] 
-			  +=1/vetDistancias[i];
-	}
-		
-	
-	
-	
-	
-	
-	for(int i=0;i<K;i++){
-		printf("\n");
-		for(j=0;j<vetCaminhos[i].size();j++)
-    		printf(" %d ",vetCaminhos[i].at(j));
-    	printf(" - %.2f",vetDistancias[i]);
-	}
-	
-	
-	
-	
 	 printf("\n");
     for(i=0;i<S.size();i++)
     	printf(" %d ",S.at(i));	
     printf("\nA melhor distancia e %.2f",L);
-    	
-   
-   
-   
-   
-   
-   
-   
-    	
-    	
-   
-	
-   
-	  
-  
-  
-  
-  
-  
-    
-    //Não deixar repetir
-    
-    printf("\nO cidade escolhida e %d\n",r);
-    
-
-	imprimirMatriz(matVarFeromonio);	
 	}
 
 
