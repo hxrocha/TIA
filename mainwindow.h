@@ -16,9 +16,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_btnCalcular_clicked();
-
-    void on_lineEditCruzamento_editingFinished();
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

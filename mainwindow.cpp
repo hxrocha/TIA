@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "ag.h"
+#include "colonia.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,71 +14,68 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_btnCalcular_clicked()
+void MainWindow::on_pushButton_clicked()
 {
-        struct cidade capitais[27] = {{"Aracaju",0},{"Belem",1},{"Belo Horizonte",2},{"Boa Vista",3},{"Brasilia",4},{"Campo Grande",5},{"Cuiaba",6},{"Curitiba",7},{"Florianopolis",8},{"Fortaleza",9},{"Goiania",10},{"Joao Pessoa",11},{"Macapa",12},{"Maceio",13},{"Manaus",14},{"Natal",15},{"Palmas",16},{"Porto Alegre",17},{"Porto Velho",18},{"Recife",19},{"Rio Branco",20},{"Rio de Janeiro",21},{"Salvador",22},{"Sao Luis",23},{"Sao Paulo",24},{"Teresina",25},{"Vitoria",26}};
-        struct cidade populacao[TAMPOPULACAO][TAMCROMOSSOMO];
-        struct cidade populacaoFilhos[TAMPOPULACAO][TAMCROMOSSOMO];
-        float avaliacoes[TAMPOPULACAO];
-        struct cidade filho1[TAMCROMOSSOMO],filho2[TAMCROMOSSOMO];
-        srand(time(NULL));
-        int nGeracoes,nCruzamento,nMutacao;
-        nGeracoes = ui->lineEditGeracao->text().toInt();
-        nCruzamento = ui->lineEditCruzamento->text().toInt();
-        nMutacao = ui->lineEditMutacao->text().toInt();
-        int i;
-        int pMelhor;
-        float media;
-        iniciaPopulacao(populacao,capitais);
-        float melhores[nGeracoes];
-        float medias[nGeracoes];
-        //imprimeCodPopulacao(populacao);
 
-        for(int g=0;g<nGeracoes;g++){
-            fazAvaliacoes(populacao,avaliacoes);
-            melhores[g] = achaMelhor(avaliacoes);
-            medias[g] = mediaDasAvaliacoes(avaliacoes);
-        i=0;
-        do{
-            int pai1 = torneio(avaliacoes,3);
-            int pai2 = torneio(avaliacoes,3);
-            if(rand()%(nCruzamento+nMutacao) <nCruzamento){
-                cruzamento(populacao[pai1],populacao[pai2],filho1,filho2);
-            }else{
-                mutacao(populacao[pai1],filho1);
-                mutacao(populacao[pai2],filho2);
-            }
-            copiaCromossomo(populacaoFilhos[i],filho1);
-            i++;
-            if(i<TAMPOPULACAO){
-                copiaCromossomo(populacaoFilhos[i],filho2);
-                i++;
-            }
-        }while(i<TAMPOPULACAO);
-        copiaPopulacao(populacao,populacaoFilhos);
+    int i,j,w;
+    float somatorio;
+    float n[TAM][TAM];
+    float p[TAM][TAM];
+    float feromonio[TAM][TAM];
+    srand(time(NULL));
+    vector <int> Sk,S;
+    float L = FLT_MAX;
+    int K = ui->edFormigas->text().toInt();
+    float vetDistancias[K];
+    vector<int> vetCaminhos[K];
+    float caminhos[TAM][TAM]={
+        {-1,5.0,3.1,-1,-1,5.2,-1},
+        {5.0,-1,4.9,-1,-1,-1,5.2},
+        {3.1,4.9,-1,-1,6,3.2,3},
+        {-1,-1,-1,-1,5.5,-1,4.8},
+        {-1,-1,6,5.5,-1,4.7,-1},
+        {5.2,-1,3.2,-1,4.7,-1,-1},
+        {-1,5.2,3,4.8,-1,-1,-1}};
 
+    geraMatrizN(caminhos,n);
+    geraMatrizFeromonio(feromonio);
+    int g;
+    int iteracoes = ui->edIteracoes->text().toInt();
+    for(g = 0;g<iteracoes;g++){
+        geraMatrizP(caminhos,feromonio,n,p);
+        int r ;
+        for(i=0;i<K;i++){
+            do{
+            Sk.clear();
+            Sk.push_back(0);
+            int laco =0;
+            do{
+                r = sorteio(p[Sk.back()]);
+                if(eInedita(r,Sk)){
+                    Sk.push_back(r);
+                    laco = 0;
+                }
+                else
+                    laco++;
+            }while((r !=3) && (laco <= 10));
+        }while(r!=3);
+
+        float Lk = calculaDistancia(Sk,caminhos);
+
+        if(Lk < L ){
+            L =Lk;
+            S = Sk;
         }
-        fazAvaliacoes(populacao,avaliacoes);
-        pMelhor = achaMelhor(avaliacoes);
-        imprimeCromo(populacao[pMelhor]);
-        printf("\n A distancia percorrida foi de %.2f",
-              avaliacoes[pMelhor]);
-
-}
-
-void MainWindow::on_lineEditCruzamento_editingFinished()
-{
-    int x = ui->lineEditCruzamento->text().toInt();
-    if(x > 100){
-          ui->lineEditMutacao->setText("0");
-          ui->lineEditCruzamento->setText("100");
-          x = 100;
-    }
-    if(x < 0){
-         ui->lineEditCruzamento->setText("0");
-          ui->lineEditMutacao->setText("100");
-          x = 0;
+        vetDistancias[i] = Lk;
+        vetCaminhos[i]=Sk;
+        }
+        atualizaFeromonio(feromonio,K,vetDistancias,vetCaminhos);
     }
 
-    ui->lineEditMutacao->setText( QString::number(100-x));
+    QString v;
+
+    for(i=0;i<S.size();i++)
+        v += " " + QString::number(S.at(i));
+    ui->edResposta->setText(v);
+
 }

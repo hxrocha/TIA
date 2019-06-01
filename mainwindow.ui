@@ -14,43 +14,27 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="btnCalcular">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>100</y>
-      <width>371</width>
+      <x>100</x>
+      <y>150</y>
+      <width>161</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Calcular</string>
+     <string>Calcular Melhor Distancia</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEditCruzamento">
+   <widget class="QLineEdit" name="edResposta">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>10</y>
-      <width>51</width>
+      <x>100</x>
+      <y>180</y>
+      <width>161</width>
       <height>20</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>85</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEditMutacao">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>40</y>
-      <width>51</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>15</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -58,12 +42,22 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>71</width>
+      <width>161</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Cruzamento</string>
+     <string>Digite a quantidade de formigas</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="edFormigas">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>10</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -71,38 +65,22 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Mutação</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>70</y>
-      <width>61</width>
+      <width>161</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Geração</string>
+     <string>Digite a quantidade de iterações</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEditGeracao">
+   <widget class="QLineEdit" name="edIteracoes">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>70</y>
-      <width>51</width>
+      <x>170</x>
+      <y>40</y>
+      <width>113</width>
       <height>20</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>100</string>
     </property>
    </widget>
   </widget>
