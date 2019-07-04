@@ -1,7 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "colonia.h"
+#include <QFile>
+#include <QTextStream>
+#include <QPointF>
+#include <QVector>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
+vector<struct ponto> vp;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -17,65 +23,163 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
 
-    int i,j,w;
-    float somatorio;
-    float n[TAM][TAM];
-    float p[TAM][TAM];
-    float feromonio[TAM][TAM];
-    srand(time(NULL));
-    vector <int> Sk,S;
-    float L = FLT_MAX;
-    int K = ui->edFormigas->text().toInt();
-    float vetDistancias[K];
-    vector<int> vetCaminhos[K];
-    float caminhos[TAM][TAM]={
-        {-1,5.0,3.1,-1,-1,5.2,-1},
-        {5.0,-1,4.9,-1,-1,-1,5.2},
-        {3.1,4.9,-1,-1,6,3.2,3},
-        {-1,-1,-1,-1,5.5,-1,4.8},
-        {-1,-1,6,5.5,-1,4.7,-1},
-        {5.2,-1,3.2,-1,4.7,-1,-1},
-        {-1,5.2,3,4.8,-1,-1,-1}};
+    QString filename="C:\\Users\\hugo\\Documents\\pkmeans\\durudataset.txt";
+    QFile inputFile(filename);
+    if (inputFile.open(QIODevice::ReadOnly))
+    {
+       QTextStream in(&inputFile);
+       while (!in.atEnd())
+       {
+          struct ponto p;
+          QString line = in.readLine();
+          ui->dadostxt->append(line);
+          p.x = line.toFloat();
+          line = in.readLine();
+          ui->dadostxt->append(line);
+          p.y = line.toFloat();
+          vp.push_back(p);
 
-    geraMatrizN(caminhos,n);
-    geraMatrizFeromonio(feromonio);
-    int g;
-    int iteracoes = ui->edIteracoes->text().toInt();
-    for(g = 0;g<iteracoes;g++){
-        geraMatrizP(caminhos,feromonio,n,p);
-        int r ;
-        for(i=0;i<K;i++){
-            do{
-            Sk.clear();
-            Sk.push_back(0);
-            int laco =0;
-            do{
-                r = sorteio(p[Sk.back()]);
-                if(eInedita(r,Sk)){
-                    Sk.push_back(r);
-                    laco = 0;
-                }
-                else
-                    laco++;
-            }while((r !=3) && (laco <= 10));
-        }while(r!=3);
+       }
+       inputFile.close();
 
-        float Lk = calculaDistancia(Sk,caminhos);
-
-        if(Lk < L ){
-            L =Lk;
-            S = Sk;
-        }
-        vetDistancias[i] = Lk;
-        vetCaminhos[i]=Sk;
-        }
-        atualizaFeromonio(feromonio,K,vetDistancias,vetCaminhos);
     }
 
-    QString v;
 
-    for(i=0;i<S.size();i++)
-        v += " " + QString::number(S.at(i));
-    ui->edResposta->setText(v);
+
+
+
+
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+
+        // printf("(%f,%f)",vp.at(i).x,vp.at(i).y);
+
+    plot.setTitle( "K-means" );
+    plot.setCanvasBackground( Qt::white );
+    plot.setAxisAutoScale(QwtPlot::xBottom,true);
+    plot.setAxisAutoScale(QwtPlot::yLeft,true);
+    plot.insertLegend( new QwtLegend() );
+    QwtPlotGrid *grid = new QwtPlotGrid();
+    grid->attach( &plot );
+
+
+
+    QGraphicsView * view = new QGraphicsView();
+    QGraphicsScene * scene = new QGraphicsScene();
+
+
+    QVector <QPointF> pontos;
+    for(int i=0;i<vp.size();i++)
+           pontos.append(QPointF(vp.at(i).x,vp.at(i).y));
+
+   for(int i=0;i<vp.size();i++)
+           scene->addEllipse(pontos[i].x(), pontos[i].y(), 1, 1);
+
+    view->setScene(scene);
+
+/*
+    QwtPlotCurve *curve2 = new QwtPlotCurve();
+    curve2->setTitle( "Média" );
+    curve2->setPen( Qt::red, 4 );
+    QPolygonF points2;
+    for(int i=0;i<nGeracoes;i++)
+        points2 << QPointF(i,medias.at(i));
+
+
+    curve2->setSamples( points2 );
+    curve2->attach( &plot );
+    */
+    struct ponto c1;
+    struct ponto c2;
+    struct ponto pr1;
+
+    c1.x = rand()%201/100.0;
+    c1.y = rand()%201/100.0;
+    c2.x = rand()%201/100.0;
+    c2.y = rand()%201/100.0;
+    pr1.x = (c1.x+c2.x)/2;
+    pr1.y = (c1.y+c2.y)/2;
+
+    float Q = (c1.y - c2.y)/(c1.x - c2.x);
+    float b = c1.y -Q*c1.x;
+
+    float Q2 = -1/Q;
+    float b2 = pr1.y - Q2*pr1.x;
+    struct ponto pe1,pe2;
+    pe1.x = 0;
+    pe1.y = Q2*pe1.x + b2;
+    pe2.x = 2;
+    pe2.y = Q2*pe2.x + b2;
+
+    for(int i=0;i<vp.size();i++){
+
+        if(Q2*vp.at(i).x+1*vp.at(i).y+b2 >=0)
+            vp.at(i).c = 1;
+        else
+             vp.at(i).c = -1;
+
+    }
+
+    QwtPlotCurve *curve = new QwtPlotCurve();
+    curve->setTitle( "Pontos" );
+    curve->setPen( Qt::blue, 4 );
+
+    QPolygonF points;
+    for(int i=0;i<vp.size();i++)
+        if(vp.at(i).c == 1)
+          points << QPointF(vp.at(i).x,vp.at(i).y);
+
+    curve->setSamples( points );
+    curve->attach( &plot );
+
+    QwtPlotCurve *curvev = new QwtPlotCurve();
+    curvev->setTitle( "Pontos" );
+    curvev->setPen( Qt::green, 4 );
+
+   // QPolygonF points;
+    points.clear();
+    for(int i=0;i<vp.size();i++)
+        if(vp.at(i).c == -1)
+          points << QPointF(vp.at(i).x,vp.at(i).y);
+
+    curvev->setSamples( points );
+    curvev->attach( &plot );
+
+
+
+    QwtPlotCurve *curve2 = new QwtPlotCurve();
+    curve2->setTitle( "unindo centroide" );
+    curve2->setPen( Qt::red, 4 );
+    QPolygonF points2;
+    points2 << QPointF(c1.x,c1.y);
+    points2 << QPointF(c2.x,c2.y);
+    curve2->setSamples( points2 );
+    curve2->attach( &plot );
+
+    QwtPlotCurve *curve3 = new QwtPlotCurve();
+    curve3->setTitle( "Separa" );
+    curve3->setPen( Qt::yellow, 4 );
+    QPolygonF points3;
+    points3<< QPointF(pe1.x,pe1.y);
+    points3 << QPointF(pe2.x,pe2.y);
+    curve3->setSamples( points3 );
+    curve3->attach( &plot );
+
+
+
+
+
+
+
+
+
+
+
+
+    plot.resize( 500, 500 );
+    plot.replot();
+    plot.show();
 
 }

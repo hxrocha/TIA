@@ -14,73 +14,53 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QTextEdit" name="dadostxt">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>150</y>
-      <width>161</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Calcular Melhor Distancia</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="edResposta">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>180</y>
-      <width>161</width>
-      <height>20</height>
+      <x>10</x>
+      <y>20</y>
+      <width>371</width>
+      <height>71</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>161</width>
-      <height>16</height>
+      <x>20</x>
+      <y>0</y>
+      <width>47</width>
+      <height>13</height>
      </rect>
     </property>
     <property name="text">
-     <string>Digite a quantidade de formigas</string>
+     <string>Pontos</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="edFormigas">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>10</y>
-      <width>113</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
-      <width>161</width>
-      <height>16</height>
+      <y>100</y>
+      <width>371</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Digite a quantidade de iterações</string>
+     <string>Ler dados</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="edIteracoes">
+   <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>40</y>
-      <width>113</width>
-      <height>20</height>
+      <x>10</x>
+      <y>220</y>
+      <width>381</width>
+      <height>23</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>Plotar o gráfico</string>
     </property>
    </widget>
   </widget>
