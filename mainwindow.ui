@@ -14,53 +14,74 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTextEdit" name="dadostxt">
+   <widget class="QLineEdit" name="edGeracoes">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>170</x>
       <y>20</y>
-      <width>371</width>
-      <height>71</height>
+      <width>113</width>
+      <height>20</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
+      <x>46</x>
+      <y>20</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Número de gerações</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnCalcular">
+    <property name="geometry">
+     <rect>
       <x>20</x>
-      <y>0</y>
-      <width>47</width>
-      <height>13</height>
+      <y>60</y>
+      <width>351</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Pontos</string>
+     <string>Calcular</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QLineEdit" name="edResposta">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>160</x>
       <y>100</y>
-      <width>371</width>
-      <height>23</height>
+      <width>113</width>
+      <height>20</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>Ler dados</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>220</y>
-      <width>381</width>
-      <height>23</height>
+      <x>90</x>
+      <y>100</y>
+      <width>71</width>
+      <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>Plotar o gráfico</string>
+     <string>Resposta</string>
     </property>
    </widget>
   </widget>
